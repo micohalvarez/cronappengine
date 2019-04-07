@@ -21,24 +21,43 @@ admin.initializeApp({
 
 var db = admin.database();
 var companiesRef = db.ref('companies');
+
 exports.hourly_job = functions.pubsub
   .topic('hourly-tick')
   .onPublish(message => {
+    var todaysDate = new Date();
+    var currentDate = new Date(
+      todaysDate.getFullYear,
+      todaysDate.getMonth,
+      todaysDate.getDay
+    );
+
     //for each companies
     companiesRef.orderByValue().on('value', function(snapshot) {
-      snapshot.forEach(function(data) {
-        console.log('data is ', data.val());
-        console.log('data data is ', data.data());
-        console.log('data drivers is ', data.data().drivers);
-        var drivers = data.child('drivers');
-
-        console.log('drivers', drivers);
+      snapshot.forEach(function(companies) {
+        var companyId = companies.key;
+        var drivers = companies.child('drivers');
+        var vehicles = companies.child('vehicles');
+        var notifsRef = companies.child('notifications');
+        //for each drivers
         drivers.forEach(function(driversData) {
-          console.log('Test', driversData.child('certificateExpiry').val());
+          var certificateExpiry = driversData.child('certificateExpiry').val();
+          var certificateExpiryDate = new Date(certificateExpiry);
+          console.log('CURRENT DATE  ', currentDate);
+          console.log('Certificate Expiry Date ', certificateExpiryDate);
+          console.log('Certificate ++31 ', certificateExpiryDate.getDate + 31);
+          if (certificateExpiryDate.getDate() + 30 == currentDate) {
+            console.log('HELLO WORLD I PUSHED THIS DATA');
+            notifsRef.push().set({
+              driverId: driversData.key,
+              expiryDate: certificateExpiry,
+              expiryCard: 'Certification'
+            });
+          }
         });
       });
     });
-    //for each drivers
+
     //check driverlicense date
     //if one month push to database
 
