@@ -27,7 +27,7 @@ exports.hourly_job = functions.pubsub
   .topic('hourly-tick')
   .onPublish(message => {
     //for each companies
-    console.log(`Message Data: ${dataString}`);
+    console.log(database.ref('companies'));
     //for each drivers
     //check driverlicense date
     //if one month push to database
@@ -37,10 +37,6 @@ exports.hourly_job = functions.pubsub
     //one month push to database
 
     console.log('This job is run every hour!');
-    if (message.data) {
-      const dataString = Buffer.from(message.data, 'base64').toString();
-      console.log(`Message Data: ${dataString}`);
-    }
 
     return true;
   });
