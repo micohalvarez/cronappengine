@@ -31,48 +31,29 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
     snapshot.forEach(function(companies) {
       var drivers = companies.child('drivers');
       var vehicles = companies.child('vehicles');
-
-      var companyRef = 'companies/' + companies.key;
-      var notifsRef = db.ref(companyRef).child('notifications');
+      var notifsLocation = 'companies/' + companies.key;
+      var notifsRef = db.ref(notifsLocation).child('notifications');
+      console.log('notifsRefLIMIT ' + notifsRef);
+      var newNotifsRef = notifsRef.push();
 
       //for each drivers
       drivers.forEach(function(driversData) {
-        var driversLocation = companyRef + '/drivers';
-
-        var curDriver = db.ref(driversLocation).child(driversData.key);
-
         var certificateExpiryDate = new Date(
           driversData.child('certificateExpiry').val()
         );
-        var cert_expiring = driversData.child('cert_expiring').val();
+        console.log('CURRENT DATE  ', todaysDate);
+        console.log('Certificate Expiry Date ', certificateExpiryDate);
 
-        var licenseExpiryDate = new Date(
-          driversData.child('licenseExpiryDate').val()
-        );
-        var license_expiring = driversData.child('license_expiring').val();
+        certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
 
-        certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
-        licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
+        console.log('certificateExpirydate3- ', certificateExpiryDate);
 
-        console.log('certificLLLExpiryDate', licenseExpiryDate);
-        console.log('certificateExpiryDate', certificateExpiryDate);
-
-        if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
-          console.log('certificateExpiryDatENTERED');
-          var newNotifsRef = notifsRef.push();
-          return newNotifsRef.set({
+        if (certificateExpiryDate >= todaysDate) {
+          console.log('HELLO WORLD I PUSHED THIS DATA');
+          newNotifsRef.set({
             driverId: driversData.key,
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Certification'
-          });
-        }
-        if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
-          console.log('LICENSE ENTERED');
-          var newNotifsRef = notifsRef.push();
-          newNotifsRef.set({
-            driverId: driversData.key,
-            expiryDate: driversData.child('licenseExpiryDate').val(),
-            expiryCard: 'Drivers Licesnse'
           });
         }
       });
