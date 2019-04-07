@@ -38,6 +38,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       //for each drivers
       drivers.forEach(function(driversData) {
         var driversLocation = companyRef + '/drivers';
+
         var curDriver = db.ref(driversLocation).child(driversData.key);
 
         var certificateExpiryDate = new Date(
@@ -52,13 +53,15 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
         licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
-        console.log('LICENSE EXPIRY', licenseExpiryDate);
+        console.log('certifiDDDDExpiryDate' + driversData.key);
+        console.log('certificLLLExpiryDate', licenseExpiryDate);
         console.log('certificateExpiryDate', certificateExpiryDate);
         if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
+          console.log('certificateExpiryDatENTERED');
           var newNotifsRef = notifsRef.push();
           newNotifsRef.set({
             driverId: driversData.key,
-            expiryDate: driversData.child('certificateExpiry').val(),
+            expiryDate: certificateExpiryDate,
             expiryCard: 'Certification'
           });
           curDriver.update({
@@ -66,10 +69,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           });
         }
         if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
+          console.log('LICENSE ENTERED');
           var newNotifsRef = notifsRef.push();
           newNotifsRef.set({
             driverId: driversData.key,
-            expiryDate: driversData.child('licenseExpiryDate').val(),
+            expiryDate: licenseExpiryDate,
             expiryCard: 'Drivers Licesnse'
           });
           curDriver.update({
