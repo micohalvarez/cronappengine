@@ -36,7 +36,6 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       var newNotifsRef = notifsRef.push();
       //for each drivers
       drivers.forEach(function(driversData) {
-        var licenseRef = driversData.child('license_expiring');
         var certificateExpiryDate = new Date(
           driversData.child('certificateExpiry').val()
         );
@@ -50,9 +49,6 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
         licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
 
-        console.log('licenseExpiryDate  ' + licenseExpiryDate);
-        console.log('todaysDate  ' + todaysDate);
-
         if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
           newNotifsRef.set({
             driverId: driversData.key,
@@ -64,13 +60,13 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           });
         }
         if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
-          console.log('EXPIRINGLICENSR');
+          console.log('LICENSE  ' + todaysDate);
           newNotifsRef.set({
             driverId: driversData.key,
             expiryDate: driversData.child('licenseExpiryDate').val(),
             expiryCard: 'Drivers Licesnse'
           });
-          licenseRef.update(1);
+          driversData.child('license_expiring').set(1);
         }
       });
 
@@ -79,7 +75,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
     });
   });
 
-  console.log('This job is run every hour!');
+  console.log('This job is run every day!');
 
   return true;
 });
