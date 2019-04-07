@@ -26,11 +26,11 @@ exports.hourly_job = functions.pubsub
   .topic('hourly-tick')
   .onPublish(message => {
     var todaysDate = new Date();
+    todaysDate.setHours(0, 0, 0, 0);
 
     //for each companies
     companiesRef.orderByValue().on('value', function(snapshot) {
       snapshot.forEach(function(companies) {
-        var companyId = companies.key;
         var drivers = companies.child('drivers');
         var vehicles = companies.child('vehicles');
         var notifsRef = companies.child('notifications');
@@ -41,7 +41,12 @@ exports.hourly_job = functions.pubsub
           console.log('CURRENT DATE  ', todaysDate);
           console.log('Certificate Expiry Date ', certificateExpiryDate);
           console.log('Certificate ++31 ', certificateExpiryDate.getDate() + 7);
-          if (certificateExpiryDate.getDate() + 7 == currentDate) {
+          var certificateExpirydate7 = certificateExpiryDate.getDate() + 7;
+          var todaysDate7 = todaysDate.getDate();
+          console.log('TODAYSDATE 77 ', todaysDate7);
+          console.log('certificateExpirydate7 ', certificateExpirydate7);
+
+          if (certificateExpirydate7 == todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
             notifsRef.push().set({
               driverId: driversData.key,
