@@ -36,17 +36,17 @@ exports.hourly_job = functions.pubsub
         var notifsRef = companies.child('notifications');
         //for each drivers
         drivers.forEach(function(driversData) {
-          var certificateExpiry = driversData.child('certificateExpiry').val();
-          var certificateExpiryDate = new Date(certificateExpiry);
+          var certificateExpiryDate = new Date(
+            driversData.child('certificateExpiry').val()
+          );
           console.log('CURRENT DATE  ', todaysDate);
           console.log('Certificate Expiry Date ', certificateExpiryDate);
-          console.log('Certificate ++31 ', certificateExpiryDate.getDate() + 7);
-          var certificateExpirydate7 = certificateExpiryDate.getDate() + 7;
-          var todaysDate7 = todaysDate.getDate();
-          console.log('TODAYSDATE 77 ', todaysDate7);
-          console.log('certificateExpirydate7 ', certificateExpirydate7);
 
-          if (certificateExpirydate7 == todaysDate) {
+          certificateExpiryDate.setDate(d.getDate() + 30);
+
+          console.log('certificateExpirydate3- ', certificateExpiryDate);
+
+          if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
             notifsRef.push().set({
               driverId: driversData.key,
