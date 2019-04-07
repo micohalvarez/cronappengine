@@ -34,7 +34,10 @@ exports.hourly_job = functions.pubsub
         var drivers = companies.child('drivers');
         var vehicles = companies.child('vehicles');
         var notifsLocation = 'companies/' + companies.key;
-        var notifsRef = db.ref(notifsLocation).child('notifications');
+        var notifsRef = db
+          .ref(notifsLocation)
+          .child('notifications')
+          .limit(15);
         console.log('notifsRef ' + notifsRef);
         //for each drivers
         drivers.forEach(function(driversData) {
