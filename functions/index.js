@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const functions = require('firebase-functions');
-
+var firebase = require('firebase');
 var config = {
   apiKey: 'AIzaSyApf-dwUYAlnupmkNeWKgpwTd5irz_3-KM',
   authDomain: 'armada-1648e.firebaseapp.com',
