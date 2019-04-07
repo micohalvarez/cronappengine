@@ -33,7 +33,7 @@ exports.hourly_job = functions.pubsub
       snapshot.forEach(function(companies) {
         var drivers = companies.child('drivers');
         var vehicles = companies.child('vehicles');
-        var notifsRef = companies.child('notifications');
+        var notifsRef = db.ref('companies/'.companies.key, '/notifications');
         //for each drivers
         drivers.forEach(function(driversData) {
           var certificateExpiryDate = new Date(
@@ -48,7 +48,7 @@ exports.hourly_job = functions.pubsub
 
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
-            notifsRef.push().set({
+            notifsRef.push()({
               driverId: driversData.key,
               expiryDate: certificateExpiry,
               expiryCard: 'Certification'
