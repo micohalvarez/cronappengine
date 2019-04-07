@@ -38,7 +38,7 @@ exports.hourly_job = functions.pubsub
           .ref(notifsLocation)
           .child('notifications')
           .limit(15);
-        console.log('notifsRef ' + notifsRef);
+        console.log('notifsRefLIMIT ' + notifsRef);
         //for each drivers
         drivers.forEach(function(driversData) {
           var certificateExpiryDate = new Date(
