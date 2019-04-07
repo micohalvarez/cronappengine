@@ -33,8 +33,8 @@ exports.hourly_job = functions.pubsub
       snapshot.forEach(function(companies) {
         var drivers = companies.child('drivers');
         var vehicles = companies.child('vehicles');
-        var notifsLocation = 'companies/' + companies.key + '/notifications';
-        var notifsRef = db.ref(notifsLocation.toString());
+        var notifsLocation = 'companies/' + companies.key;
+        var notifsRef = db.ref(notifsLocation).child('notifications');
 
         //for each drivers
         drivers.forEach(function(driversData) {
