@@ -42,11 +42,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
         var certExpiring = driversData.child('cert_expiring').val();
 
         var licenseExpiryDate = new Date(
-          driversData.child('licenseExpiry').val()
+          driversData.child('licenseExpiryDate').val()
         );
         var license_expiring = driversData.child('license_expiring').val();
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
-        licenseExpiryDate.setDate(certificateExpiryDate.getDate() - 30);
+        licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
 
         if (certificateExpiryDate <= todaysDate && certExpiring == '0') {
           newNotifsRef.set({
@@ -54,12 +54,18 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Certification'
           });
+          driversData.update({
+            cert_expiring: 1
+          });
         }
         if (licenseExpiryDate <= todaysDate && license_expiring == '0') {
           newNotifsRef.set({
             driverId: driversData.key,
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Drivers Licesnse'
+          });
+          driversData.update({
+            license_expiring: 1
           });
         }
       });
