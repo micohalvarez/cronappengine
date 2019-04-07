@@ -52,7 +52,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
         licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
-
+        console.log('LICENSE EXPIRY', licenseExpiryDate);
+        console.log('certificateExpiryDate', certificateExpiryDate);
         if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
           var newNotifsRef = notifsRef.push();
           newNotifsRef.set({
