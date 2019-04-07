@@ -31,9 +31,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
     snapshot.forEach(function(companies) {
       var drivers = companies.child('drivers');
       var vehicles = companies.child('vehicles');
+
       var notifsLocation = 'companies/' + companies.key;
       var notifsRef = db.ref(notifsLocation).child('notifications');
       var newNotifsRef = notifsRef.push();
+
       //for each drivers
       drivers.forEach(function(driversData) {
         var certificateExpiryDate = new Date(
@@ -48,6 +50,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
         licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
+        console.log('LICENSE_EXPIRING', license_expiring);
+        console.log('cert_expiring', cert_expiring);
 
         if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
           newNotifsRef.set({
@@ -55,23 +59,16 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Certification'
           });
-          driversData.update({
-            cert_expiring: 1
-          });
         }
-        if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
-          console.log('LICENSE  ' + todaysDate);
-          newNotifsRef.set({
-            driverId: driversData.key,
-            expiryDate: driversData.child('licenseExpiryDate').val(),
-            expiryCard: 'Drivers Licesnse'
-          });
-          driversData.child('license_expiring').set(1);
-        }
+        // if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
+        //   console.log('LICENSE  ' + todaysDate);
+        //   newNotifsRef.set({
+        //     driverId: driversData.key,
+        //     expiryDate: driversData.child('licenseExpiryDate').val(),
+        //     expiryCard: 'Drivers Licesnse'
+        //   });
+        // }
       });
-
-      //for each vehicles
-      vehicles.forEach(function(vehiclesData) {});
     });
   });
 
