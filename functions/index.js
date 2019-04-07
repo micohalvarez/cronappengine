@@ -27,9 +27,14 @@ exports.hourly_job = functions.pubsub
     //for each companies
     companiesRef.orderByValue().on('value', function(snapshot) {
       snapshot.forEach(function(data) {
+        console.log('data is ', data.val());
+        console.log('data data is ', data.data());
+        console.log('data drivers is ', data.data().drivers);
         var drivers = data.child('drivers');
+
+        console.log('drivers', drivers);
         drivers.forEach(function(driversData) {
-          console.log(driversData.child('certificateExpiry').val());
+          console.log('Test', driversData.child('certificateExpiry').val());
         });
       });
     });
