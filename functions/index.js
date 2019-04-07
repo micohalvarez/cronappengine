@@ -33,7 +33,9 @@ exports.hourly_job = functions.pubsub
       snapshot.forEach(function(companies) {
         var drivers = companies.child('drivers');
         var vehicles = companies.child('vehicles');
-        var notifsRef = db.ref('companies/'.companies.key, '/notifications');
+
+        var notifsRef = db.ref('companies/' + companies.key + '/notifications');
+        console.log('notifsRef ', notifsRef);
         //for each drivers
         drivers.forEach(function(driversData) {
           var certificateExpiryDate = new Date(
