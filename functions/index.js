@@ -42,7 +42,7 @@ exports.hourly_job = functions.pubsub
           console.log('CURRENT DATE  ', todaysDate);
           console.log('Certificate Expiry Date ', certificateExpiryDate);
 
-          certificateExpiryDate.setDate(d.getDate() + 30);
+          certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
 
           console.log('certificateExpirydate3- ', certificateExpiryDate);
 
