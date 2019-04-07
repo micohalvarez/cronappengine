@@ -32,12 +32,14 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       var drivers = companies.child('drivers');
       var vehicles = companies.child('vehicles');
 
-      var notifsLocation = 'companies/' + companies.key;
-      var notifsRef = db.ref(notifsLocation).child('notifications');
-      var newNotifsRef = notifsRef.push();
+      var companyRef = 'companies/' + companies.key;
+      var notifsRef = db.ref(companyRef).child('notifications');
 
       //for each drivers
       drivers.forEach(function(driversData) {
+        var driversLocation = companyRef + '/drivers';
+        var curDriver = db.ref(driversLocation).child(driversData.key);
+
         var certificateExpiryDate = new Date(
           driversData.child('certificateExpiry').val()
         );
@@ -50,24 +52,29 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
         licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
-        console.log('LICENSE_EXPIRING', license_expiring);
-        console.log('cert_expiring', cert_expiring);
 
         if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
+          var newNotifsRef = notifsRef.push();
           newNotifsRef.set({
             driverId: driversData.key,
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Certification'
           });
+          curDriver.update({
+            cert_expiring: 1
+          });
         }
-        // if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
-        //   console.log('LICENSE  ' + todaysDate);
-        //   newNotifsRef.set({
-        //     driverId: driversData.key,
-        //     expiryDate: driversData.child('licenseExpiryDate').val(),
-        //     expiryCard: 'Drivers Licesnse'
-        //   });
-        // }
+        if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
+          var newNotifsRef = notifsRef.push();
+          newNotifsRef.set({
+            driverId: driversData.key,
+            expiryDate: driversData.child('licenseExpiryDate').val(),
+            expiryCard: 'Drivers Licesnse'
+          });
+          curDriver.update({
+            license_expiring: 1
+          });
+        }
       });
     });
   });
