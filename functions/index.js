@@ -25,10 +25,11 @@ exports.hourly_job = functions.pubsub
   .topic('hourly-tick')
   .onPublish(message => {
     //for each companies
-    companiesRef.orderByValue().on("value", function(snapshot) {
+    companiesRef.orderByValue().on('value', function(snapshot) {
       snapshot.forEach(function(data) {
-        console.log("The " + data.key + " dinosaur's score is " + data.val());
+        console.log('The ' + data.key + " dinosaur's score is " + data.val());
       });
+    });
     //for each drivers
     //check driverlicense date
     //if one month push to database
