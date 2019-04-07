@@ -20,12 +20,15 @@ admin.initializeApp({
 });
 
 var db = admin.database();
-
+var companiesRef = db.ref('companies');
 exports.hourly_job = functions.pubsub
   .topic('hourly-tick')
   .onPublish(message => {
     //for each companies
-    console.log(db.ref('companies'));
+    companiesRef.orderByValue().on("value", function(snapshot) {
+      snapshot.forEach(function(data) {
+        console.log("The " + data.key + " dinosaur's score is " + data.val());
+      });
     //for each drivers
     //check driverlicense date
     //if one month push to database
