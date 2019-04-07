@@ -27,7 +27,10 @@ exports.hourly_job = functions.pubsub
     //for each companies
     companiesRef.orderByValue().on('value', function(snapshot) {
       snapshot.forEach(function(data) {
-        console.log('The ' + data.key + " dinosaur's score is " + data.val());
+        var drivers = data.child('drivers');
+        drivers.forEach(function(driversData) {
+          console.log(driversData.child('certificateExpiry').val());
+        });
       });
     });
     //for each drivers
