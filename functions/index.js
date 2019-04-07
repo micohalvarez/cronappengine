@@ -39,16 +39,20 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
         var certificateExpiryDate = new Date(
           driversData.child('certificateExpiry').val()
         );
-        var certExpiring = driversData.child('cert_expiring').val();
+        var cert_expiring = driversData.child('cert_expiring').val();
 
         var licenseExpiryDate = new Date(
           driversData.child('licenseExpiryDate').val()
         );
         var license_expiring = driversData.child('license_expiring').val();
+
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 90);
         licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 30);
+        console.log('CERTIFICATE EXPIRY ' + certificateExpiryDate);
+        console.log('licenseExpiryDate  ' + licenseExpiryDate);
+        console.log('todaysDate  ' + todaysDate);
 
-        if (certificateExpiryDate <= todaysDate && certExpiring == '0') {
+        if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
           newNotifsRef.set({
             driverId: driversData.key,
             expiryDate: driversData.child('certificateExpiry').val(),
@@ -58,7 +62,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             cert_expiring: 1
           });
         }
-        if (licenseExpiryDate <= todaysDate && license_expiring == '0') {
+        if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
           newNotifsRef.set({
             driverId: driversData.key,
             expiryDate: driversData.child('certificateExpiry').val(),
