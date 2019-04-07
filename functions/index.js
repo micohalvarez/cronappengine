@@ -27,7 +27,7 @@ exports.hourly_job = functions.pubsub
   .onPublish(message => {
     var todaysDate = new Date();
     todaysDate.setHours(0, 0, 0, 0);
-
+    console.log('companiesRef ' + companiesRef);
     //for each companies
     companiesRef.orderByValue().on('value', function(snapshot) {
       snapshot.forEach(function(companies) {
@@ -35,7 +35,7 @@ exports.hourly_job = functions.pubsub
         var vehicles = companies.child('vehicles');
         var notifsLocation = 'companies/' + companies.key;
         var notifsRef = db.ref(notifsLocation).child('notifications');
-
+        console.log('notifsRef ' + notifsRef);
         //for each drivers
         drivers.forEach(function(driversData) {
           var certificateExpiryDate = new Date(
