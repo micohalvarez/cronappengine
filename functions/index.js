@@ -34,11 +34,10 @@ exports.hourly_job = functions.pubsub
         var drivers = companies.child('drivers');
         var vehicles = companies.child('vehicles');
         var notifsLocation = 'companies/' + companies.key;
-        var notifsRef = db
-          .ref(notifsLocation)
-          .child('notifications')
-          .limit(15);
+        var notifsRef = db.ref(notifsLocation).child('notifications');
         console.log('notifsRefLIMIT ' + notifsRef);
+        var newNotifsRef = notifsRef.push();
+
         //for each drivers
         drivers.forEach(function(driversData) {
           var certificateExpiryDate = new Date(
@@ -53,7 +52,7 @@ exports.hourly_job = functions.pubsub
 
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
-            notifsRef.push()({
+            newNotifsRef.set({
               driverId: driversData.key,
               expiryDate: driversData.child('certificateExpiry').val(),
               expiryCard: 'Certification'
