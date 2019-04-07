@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const functions = require('firebase-functions');
-var firebase = require('firebase');
-var config = {
-  apiKey: 'AIzaSyApf-dwUYAlnupmkNeWKgpwTd5irz_3-KM',
-  authDomain: 'armada-1648e.firebaseapp.com',
-  databaseURL: 'https://armada-220507.firebaseio.com',
-  storageBucket: 'aarmada-220507.appspot.com'
-};
+var admin = require('firebase-admin');
 
-firebase.initializeApp(config);
-var database = firebase.database();
+var serviceAccount = require('/armada-220507-firebase-adminsdk-hk7cp-3aa2e04191.json');
+
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  databaseURL: 'https://armada-220507.firebaseio.com/'
+});
+
+var db = admin.database();
 
 exports.hourly_job = functions.pubsub
   .topic('hourly-tick')
   .onPublish(message => {
     //for each companies
-    console.log(database.ref('companies'));
+    console.log(db.ref('companies'));
     //for each drivers
     //check driverlicense date
     //if one month push to database
