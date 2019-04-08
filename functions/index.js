@@ -55,6 +55,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Certification'
           });
+          newNotifsRef = notifsRef.push();
         }
       });
     });
