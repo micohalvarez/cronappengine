@@ -58,7 +58,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           }
         });
       });
-      notifsRef.set(notifs);
+      notifsRef.update(notifs);
     });
   });
   console.log('This job is run every day!!!');
