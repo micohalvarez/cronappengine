@@ -45,11 +45,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           );
           console.log('drivers' + drivers);
           console.log('Certificate Expiry Date ', certificateExpiryDate);
-  
+
           certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
-  
+
           console.log('certificateExpirydate3- ', certificateExpiryDate);
-  
+
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
             newNotifsRef.set({
@@ -59,14 +59,10 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             });
             newNotifsRef = notifsRef.push();
           }
-
         });
-
-
-
+      });
     });
   });
-
   console.log('This job is run every day!!!');
 
   return true;
