@@ -35,13 +35,13 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       var notifsRef = db.ref(notifsLocation).child('notifications');
       console.log('notifsRefLIMIT ' + notifsRef);
       var newNotifsRef = notifsRef.push();
-
+      console.log('driversLIMIT ' + drivers);
       //for each drivers
       drivers.forEach(function(driversData) {
         var certificateExpiryDate = new Date(
           driversData.child('certificateExpiry').val()
         );
-        console.log('CURRENT DATE  ', todaysDate);
+        console.log('drivers' + driversData);
         console.log('Certificate Expiry Date ', certificateExpiryDate);
 
         certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
@@ -55,14 +55,13 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             expiryDate: driversData.child('certificateExpiry').val(),
             expiryCard: 'Certification'
           });
-          notifsRef = db.ref(notifsLocation).child('notifications');
           newNotifsRef = notifsRef.push();
         }
       });
     });
   });
 
-  console.log('This job is run every day!');
+  console.log('This job is run every day!!!');
 
   return true;
 });
