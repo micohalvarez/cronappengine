@@ -29,31 +29,41 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   //for each companies
   companiesRef.orderByValue().on('value', function(snapshot) {
     snapshot.forEach(function(companies) {
-      var drivers = companies.child('drivers');
+      var compLocation = 'companies/' + companies.key;
+      var driversRef = db.ref(compLocation).child('drivers');
+
       var vehicles = companies.child('vehicles');
-      var notifsLocation = 'companies/' + companies.key;
-      var notifsRef = db.ref(notifsLocation).child('notifications');
-      console.log('notifsRefLIMIT ' + notifsRef);
+
+      var notifsRef = db.ref(compLocation).child('notifications');
+
       var newNotifsRef = notifsRef.push();
-      console.log('driversLIMIT ' + drivers);
-      //for each drivers
-      drivers.forEach(function(driversData) {
-        var certificateExpiryDate = new Date(
-          driversData.child('certificateExpiry').val()
-        );
-        console.log('drivers' + driversData);
-        console.log('Certificate Expiry Date ', certificateExpiryDate);
 
-        certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
+      driversRef.orderByValue().on('value', function(snapshot) {
+        snapshot.forEach(function(drivers) {
+          var certificateExpiryDate = new Date(
+            drivers.child('certificateExpiry').val()
+          );
+          console.log('drivers' + drivers);
+          console.log('Certificate Expiry Date ', certificateExpiryDate);
+  
+          certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
+  
+          console.log('certificateExpirydate3- ', certificateExpiryDate);
+  
+          if (certificateExpiryDate >= todaysDate) {
+            console.log('HELLO WORLD I PUSHED THIS DATA');
+            newNotifsRef.set({
+              driverId: drivers.key,
+              expiryDate: driversData.child('licenseExpiryDate').val(),
+              expiryCard: 'Drivers Licesnse'
+            });
+            newNotifsRef = notifsRef.push();
+          }
 
-        console.log('certificateExpirydate3- ', certificateExpiryDate);
+        });
 
-        if (certificateExpiryDate >= todaysDate) {
-          console.log('HELLO WORLD I PUSHED THIS DATA');
 
-          newNotifsRef = notifsRef.push();
-        }
-      });
+
     });
   });
 
