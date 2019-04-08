@@ -54,7 +54,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             console.log('HELLO WORLD I PUSHED THIS DATA');
             newNotifsRef.set({
               driverId: drivers.key,
-              expiryDate: driversData.child('licenseExpiryDate').val(),
+              expiryDate: drivers.child('licenseExpiryDate').val(),
               expiryCard: 'Drivers Licesnse'
             });
             newNotifsRef = notifsRef.push();
