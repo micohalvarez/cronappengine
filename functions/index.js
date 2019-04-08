@@ -53,8 +53,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
             noitfs[notifsRef.push().key] = {
-              driverId: driversData.key,
-              expiryDate: driversData.child('certificateExpiry').val(),
+              driverId: drivers.key,
+              expiryDate: drivers.child('certificateExpiry').val(),
               expiryCard: 'Certification'
             };
           }
