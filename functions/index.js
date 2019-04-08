@@ -33,7 +33,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       var driversRef = db.ref(compLocation).child('drivers');
 
       var vehicles = companies.child('vehicles');
-
+      var noitfs = {};
       var notifsRef = db.ref(compLocation).child('notifications');
 
       var newNotifsRef = notifsRef.push();
@@ -52,14 +52,14 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
-            newNotifsRef.set({
-              driverId: drivers.key,
-              expiryDate: drivers.child('licenseExpiryDate').val(),
-              expiryCard: 'Drivers Licesnse'
-            });
-            newNotifsRef = notifsRef.push();
+            noitfs[notifsRef.push().key] = {
+              driverId: driversData.key,
+              expiryDate: driversData.child('certificateExpiry').val(),
+              expiryCard: 'Certification'
+            };
           }
         });
+        newNotifsRef.set(notifs);
       });
     });
   });
