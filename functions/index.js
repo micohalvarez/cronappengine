@@ -50,7 +50,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
-            notifs[drivers.key] = {
+            notifs[notifsRef.push().key] = {
               driverId: drivers.key,
               expiryDate: drivers.child('certificateExpiry').val(),
               expiryCard: 'Certification'
