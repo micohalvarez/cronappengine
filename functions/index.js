@@ -33,7 +33,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       var driversRef = db.ref(compLocation).child('drivers');
 
       var vehicles = companies.child('vehicles');
-      var noitfs = {};
+      var notifs = {};
       var notifsRef = db.ref(compLocation).child('notifications');
 
       driversRef.orderByValue().on('value', function(snapshot) {
@@ -50,7 +50,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
-            noitfs[notifsRef.push().key] = {
+            notifs[notifsRef.push().key] = {
               driverId: drivers.key,
               expiryDate: drivers.child('certificateExpiry').val(),
               expiryCard: 'Certification'
