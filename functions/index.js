@@ -50,17 +50,17 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
 
           if (certificateExpiryDate >= todaysDate) {
             console.log('HELLO WORLD I PUSHED THIS DATA');
-            var notifs = {
+            notifs = {
               driverId: drivers.key,
               expiryDate: drivers.child('certificateExpiry').val(),
               expiryCard: 'Certification'
             };
             console.log('NOTIFS', notifs);
+            var newNotifsRef = notifsRef.push();
+            newNotifsRef.set(notifs);
           }
         });
       });
-      var newNotifsRef = notifsRef.push();
-      newNotifsRef.set(notifs);
     });
   });
   console.log('This job is run every day!!!');
