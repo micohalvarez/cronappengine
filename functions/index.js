@@ -55,7 +55,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               expiryDate: drivers.child('certificateExpiry').val(),
               expiryCard: 'Certification'
             };
-            console.log('NOTIFS', notifs);
+            notifsRef = db.ref(compLocation).child('notifications');
             var newNotifsRef = notifsRef.push();
             newNotifsRef.set(notifs);
           }
