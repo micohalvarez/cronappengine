@@ -66,9 +66,24 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           }
         });
       });
+      vehiclesRef.orderByValue().on('value', function(snapshot) {
+        snapshot.forEach(function(vehicles) {
+          var registrationExpiryDate = new Date(
+            vehicles.child('registrationExpiryDate').val()
+          );
+          registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
+          if (certificateExpiryDate >= todaysDate) {
+            notifs[notifsRef.push().key] = {
+              driverId: vehicles.key,
+              expiryDate: vehicles.child('certificateExpiry').val(),
+              expiryCard: 'Certification'
+            };
+          }
+        });
+      });
     });
+    notifsRef.update(notifs);
   });
-  notifsRef.update(notifs);
   console.log('This job is run every day!!!');
   return true;
 });
