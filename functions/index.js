@@ -31,8 +31,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
     snapshot.forEach(function(companies) {
       var compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('drivers');
+      var vehiclesRef = db.ref(compLocation).child('vehicles');
 
-      var vehicles = companies.child('vehicles');
       var notifs = {};
       var notifsRef = db.ref(compLocation).child('notifications');
 
@@ -41,27 +41,34 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           var certificateExpiryDate = new Date(
             drivers.child('certificateExpiry').val()
           );
-          console.log('drivers' + drivers);
-          console.log('Certificate Expiry Date ', certificateExpiryDate);
+          var cert_expiring = drivers.child('cert_expiring').val();
+          var license_expiring = drivers.child('license_expiring').val();
+          var licenseExpiryDate = new Date(
+            drivers.child('licenseExpiryDate').val()
+          );
 
-          certificateExpiryDate.setDate(certificateExpiryDate.getDate() + 30);
+          certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 30);
+          licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 90);
 
-          console.log('certificateExpirydate3- ', certificateExpiryDate);
-
-          if (certificateExpiryDate >= todaysDate) {
-            console.log('HELLO WORLD I PUSHED THIS DATA');
+          if (certificateExpiryDate >= todaysDate && cert_expiring == 0) {
             notifs[notifsRef.push().key] = {
               driverId: drivers.key,
               expiryDate: drivers.child('certificateExpiry').val(),
               expiryCard: 'Certification'
             };
           }
+          if (licenseExpiryDate >= todaysDate && license_expiring == 0) {
+            notifs[notifsRef.push().key] = {
+              driverId: drivers.key,
+              expiryDate: drivers.child('licenseExpiryDate').val(),
+              expiryCard: 'License'
+            };
+          }
         });
       });
-      notifsRef.update(notifs);
     });
   });
+  notifsRef.update(notifs);
   console.log('This job is run every day!!!');
-
   return true;
 });
