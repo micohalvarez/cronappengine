@@ -31,10 +31,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   //for each companies
   companiesRef.once('value', function(snapshot) {
     snapshot.forEach(function(companies) {
+      console.log('HELLO WORLD ' + companies.key);
       var compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('drivers');
       var vehiclesRef = db.ref(compLocation).child('vehicles');
-      console.log('HELLO WORLD ' + driversRef);
+      console.log('HELLO WORLD ' + vehiclesRef);
       notifsRef = db.ref(compLocation).child('notifications');
 
       vehiclesRef.once('value', function(snapshot) {
