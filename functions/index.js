@@ -27,6 +27,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   todaysDate.setHours(0, 0, 0, 0);
   var notifsRef;
   var notifs = {};
+  console.log('companiesRef' + companiesRef);
   //for each companies
 
   companiesRef.forEach(function(companies) {
