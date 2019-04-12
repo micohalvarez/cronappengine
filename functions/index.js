@@ -75,7 +75,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             vehicles.child('registrationExpiryDate').val()
           );
           var reg_expiring = vehicles.child('reg_expiring').val();
-
+          var thisChild = vehiclesRef.child(vehicles.key);
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
 
           if (registrationExpiryDate >= todaysDate && reg_expiring == 0) {
@@ -85,7 +85,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               expiryDate: vehicles.child('registrationExpiryDate').val(),
               expiryCard: 'Certification'
             };
-            vehicles.update({
+            thisChild.update({
               reg_expiring: 1
             });
           }
