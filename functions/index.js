@@ -27,22 +27,56 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   todaysDate.setHours(0, 0, 0, 0);
   var notifsRef;
   var notifs = {};
-  console.log('HELLO WORLD');
   //for each companies
-  companiesRef.once('value', function(snapshot) {
+  companiesRef.orderByValue().once('value', function(snapshot) {
     snapshot.forEach(function(companies) {
-      console.log('HELLO WORLD ' + companies.key);
       var compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('drivers');
       var vehiclesRef = db.ref(compLocation).child('vehicles');
-      console.log('HELLO WORLD ' + vehiclesRef);
+
       notifsRef = db.ref(compLocation).child('notifications');
 
-      vehiclesRef.once('value', function(snapshot) {
+      driversRef.orderByValue().once('value', function(snapshot) {
+        snapshot.forEach(function(drivers) {
+          var certificateExpiryDate = new Date(
+            drivers.child('certificateExpiry').val()
+          );
+          var cert_expiring = drivers.child('cert_expiring').val();
+          var license_expiring = drivers.child('license_expiring').val();
+          var licenseExpiryDate = new Date(
+            drivers.child('licenseExpiryDate').val()
+          );
+
+          certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 30);
+          licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 90);
+
+          if (certificateExpiryDate >= todaysDate && cert_expiring == 0) {
+            notifs[notifsRef.push().key] = {
+              createdAt: todaysDate.toString(),
+              is_seen: 0,
+              expiryDate: drivers.child('certificateExpiry').val(),
+              expiryCard: 'Certification'
+            };
+          }
+          if (licenseExpiryDate >= todaysDate && license_expiring == 0) {
+            notifs[notifsRef.push().key] = {
+              createdAt: todaysDate.toString(),
+              is_seen: 0,
+              expiryDate: drivers.child('licenseExpiryDate').val(),
+              expiryCard: 'License'
+            };
+          }
+        });
+      });
+      vehiclesRef.orderByValue().once('value', function(snapshot) {
         snapshot.forEach(function(vehicles) {
           var registrationExpiryDate = new Date(
             vehicles.child('registrationExpiryDate').val()
           );
+          console.log(
+            'REGDATE22' + vehicles.child('registrationExpiryDate').val()
+          );
+          console.log('REGDATE11' + registrationExpiryDate);
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
           console.log('REGDATE' + registrationExpiryDate);
           console.log('todaysDate' + todaysDate);
@@ -57,7 +91,6 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           }
         });
       });
-      console.log('NOTIFSREF' + notifsRef);
       notifsRef.update(notifs);
     });
   });
