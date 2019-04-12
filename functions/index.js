@@ -89,11 +89,9 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               expiryCard: 'Certification'
             };
           }
+          notifsRef.update(notifs);
         });
       });
-      console.log(JSON.stringify(notifs) + ' NOTIFE');
-      console.log(notifsRef + ' notifsRef');
-      notifsRef.update(notifs);
     });
   });
   console.log('This job is run every day!!!');
