@@ -29,7 +29,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   var notifs = {};
   //for each companies
   companiesRef.orderByValue().once('value', function(snapshot) {
-    companiesRef.forEach(function(companies) {
+    snapshot.forEach(function(companies) {
       var compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('drivers');
       var vehiclesRef = db.ref(compLocation).child('vehicles');
