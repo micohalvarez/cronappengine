@@ -56,7 +56,12 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               createdAt: todaysDate.toString(),
               is_seen: 0,
               expiryDate: drivers.child('certificateExpiry').val(),
-              expiryCard: 'Certification'
+              notifText:
+                drivers.firstName +
+                ' ' +
+                driver.lastName +
+                "'s certificate will expire on " +
+                todaysDate.toLocaleDateString('en-US', options)
             };
             thisChild.update({
               cert_expiring: 1
@@ -67,7 +72,12 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               createdAt: todaysDate.toString(),
               is_seen: 0,
               expiryDate: drivers.child('licenseExpiryDate').val(),
-              expiryCard: 'License'
+              notifText:
+                drivers.firstName +
+                ' ' +
+                driver.lastName +
+                "'s driver's license will expire on " +
+                todaysDate.toLocaleDateString('en-US', options)
             };
             thisChild.update({
               license_expiring: 1
@@ -90,7 +100,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               createdAt: todaysDate.toString(),
               is_seen: 0,
               expiryDate: vehicles.child('registrationExpiryDate').val(),
-              expiryCard: 'Certification'
+              notifText:
+                'Vehicle Plate No: ' +
+                vehicles.plateNumber +
+                ' registration will expire on ' +
+                todaysDate.toLocaleDateString('en-US', options)
             };
             thisChild.update({
               reg_expiring: 1
