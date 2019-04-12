@@ -91,6 +91,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           }
         });
       });
+      console.log(notifs + ' NOTIFE');
+      console.log(notifsRef + ' notifsRef');
       notifsRef.update(notifs);
     });
   });
