@@ -27,54 +27,26 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   todaysDate.setHours(0, 0, 0, 0);
   var notifsRef;
   var notifs = {};
+  console.log('HELLO WORLD');
   //for each companies
-  companiesRef.orderByValue().once('value', function(snapshot) {
+  companiesRef.once('value', function(snapshot) {
     snapshot.forEach(function(companies) {
       var compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('drivers');
       var vehiclesRef = db.ref(compLocation).child('vehicles');
-
+      console.log('HELLO WORLD ' + driversRef);
       notifsRef = db.ref(compLocation).child('notifications');
 
-      driversRef.orderByValue().once('value', function(snapshot) {
-        snapshot.forEach(function(drivers) {
-          var certificateExpiryDate = new Date(
-            drivers.child('certificateExpiry').val()
-          );
-          var cert_expiring = drivers.child('cert_expiring').val();
-          var license_expiring = drivers.child('license_expiring').val();
-          var licenseExpiryDate = new Date(
-            drivers.child('licenseExpiryDate').val()
-          );
-
-          certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 30);
-          licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 90);
-
-          if (certificateExpiryDate >= todaysDate && cert_expiring == 0) {
-            notifs[notifsRef.push().key] = {
-              createdAt: todaysDate.toString(),
-              is_seen: 0,
-              expiryDate: drivers.child('certificateExpiry').val(),
-              expiryCard: 'Certification'
-            };
-          }
-          if (licenseExpiryDate >= todaysDate && license_expiring == 0) {
-            notifs[notifsRef.push().key] = {
-              createdAt: todaysDate.toString(),
-              is_seen: 0,
-              expiryDate: drivers.child('licenseExpiryDate').val(),
-              expiryCard: 'License'
-            };
-          }
-        });
-      });
-      vehiclesRef.orderByValue().once('value', function(snapshot) {
+      vehiclesRef.once('value', function(snapshot) {
         snapshot.forEach(function(vehicles) {
           var registrationExpiryDate = new Date(
             vehicles.child('registrationExpiryDate').val()
           );
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
+          console.log('REGDATE' + registrationExpiryDate);
+          console.log('todaysDate' + todaysDate);
           if (registrationExpiryDate >= todaysDate) {
+            console.log('sokpa' + todaysDate);
             notifs[notifsRef.push().key] = {
               createdAt: todaysDate.toString(),
               is_seen: 0,
@@ -84,6 +56,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           }
         });
       });
+      console.log('NOTIFSREF' + notifsRef);
       notifsRef.update(notifs);
     });
   });
