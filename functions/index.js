@@ -20,7 +20,7 @@ admin.initializeApp({
 });
 
 var db = admin.database();
-var companiesRef = db.ref('companies');
+var companiesRef = db.ref().child('companies');
 
 exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   var todaysDate = new Date();
