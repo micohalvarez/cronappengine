@@ -66,6 +66,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               expiryCard: 'License'
             };
           }
+          notifsRef.update(notifs);
         });
       });
       vehiclesRef.orderByValue().once('value', function(snapshot) {
@@ -73,21 +74,20 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           var registrationExpiryDate = new Date(
             vehicles.child('registrationExpiryDate').val()
           );
-          console.log(
-            'REGDATE22' + vehicles.child('registrationExpiryDate').val()
-          );
-          console.log('REGDATE11' + registrationExpiryDate);
+          var reg_expiring = drivers.child('reg_expiring').val();
+
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
-          console.log('REGDATE' + registrationExpiryDate);
-          console.log('todaysDate' + todaysDate);
-          if (registrationExpiryDate >= todaysDate) {
-            console.log('sokpa' + todaysDate);
+
+          if (registrationExpiryDate >= todaysDate && reg_expiring == 0) {
             notifs[notifsRef.push().key] = {
               createdAt: todaysDate.toString(),
               is_seen: 0,
               expiryDate: vehicles.child('registrationExpiryDate').val(),
               expiryCard: 'Certification'
             };
+            vehicles.update({
+              reg_expiring: 1
+            });
           }
           notifsRef.update(notifs);
         });
