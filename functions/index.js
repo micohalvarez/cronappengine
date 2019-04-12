@@ -74,11 +74,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             vehicles.child('registrationExpiryDate').val()
           );
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
-          if (certificateExpiryDate >= todaysDate) {
+          if (registrationExpiryDate >= todaysDate) {
             notifs[notifsRef.push().key] = {
               createdAt: todaysDate.toString(),
               is_seen: 0,
-              expiryDate: vehicles.child('certificateExpiry').val(),
+              expiryDate: vehicles.child('registrationExpiryDate').val(),
               expiryCard: 'Certification'
             };
           }
