@@ -61,7 +61,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
                 ' ' +
                 driver.lastName +
                 "'s certificate will expire on " +
-                todaysDate.toLocaleDateString('en-US', options)
+                todaysDate.toLocaleDateString('en-US')
             };
             thisChild.update({
               cert_expiring: 1
@@ -77,7 +77,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
                 ' ' +
                 driver.lastName +
                 "'s driver's license will expire on " +
-                todaysDate.toLocaleDateString('en-US', options)
+                todaysDate.toLocaleDateString('en-US')
             };
             thisChild.update({
               license_expiring: 1
@@ -104,7 +104,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
                 'Vehicle Plate No: ' +
                 vehicles.plateNumber +
                 ' registration will expire on ' +
-                todaysDate.toLocaleDateString('en-US', options)
+                todaysDate.toLocaleDateString('en-US')
             };
             thisChild.update({
               reg_expiring: 1
