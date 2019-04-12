@@ -74,7 +74,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           var registrationExpiryDate = new Date(
             vehicles.child('registrationExpiryDate').val()
           );
-          var reg_expiring = drivers.child('reg_expiring').val();
+          var reg_expiring = vehicles.child('reg_expiring').val();
 
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
 
