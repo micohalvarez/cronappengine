@@ -59,7 +59,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               notifText:
                 drivers.child('firstName').val() +
                 ' ' +
-                driver.child('lastName').val() +
+                drivers.child('lastName').val() +
                 "'s certificate will expire on " +
                 todaysDate.toLocaleDateString('en-US')
             };
