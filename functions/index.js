@@ -51,33 +51,37 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           certificateExpiryDate.setDate(certificateExpiryDate.getDate() - 30);
           licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 90);
 
-          if (certificateExpiryDate >= todaysDate && cert_expiring == 0) {
+          if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
             notifs[notifsRef.push().key] = {
+              id: drivers.key.toString(),
               createdAt: todaysDate.toString(),
-              is_seen: 0,
+              is_active: 1,
+              type: 'Driver',
               expiryDate: drivers.child('certificateExpiry').val(),
               notifText:
                 drivers.child('firstName').val() +
                 ' ' +
                 drivers.child('lastName').val() +
                 "'s certificate will expire on " +
-                todaysDate.toLocaleDateString('en-US')
+                drivers.child('certificateExpiry').val()
             };
             thisChild.update({
               cert_expiring: 1
             });
           }
-          if (licenseExpiryDate >= todaysDate && license_expiring == 0) {
+          if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
             notifs[notifsRef.push().key] = {
+              id: drivers.key.toString(),
               createdAt: todaysDate.toString(),
-              is_seen: 0,
+              is_active: 1,
+              type: 'Driver',
               expiryDate: drivers.child('licenseExpiryDate').val(),
               notifText:
                 drivers.child('firstName').val() +
                 ' ' +
                 driver.child('lastName').val() +
                 "'s driver's license will expire on " +
-                todaysDate.toLocaleDateString('en-US')
+                drivers.child('licenseExpiryDate').val()
             };
             thisChild.update({
               license_expiring: 1
@@ -92,22 +96,47 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             vehicles.child('registrationExpiryDate').val()
           );
           var reg_expiring = vehicles.child('reg_expiring').val();
+          var is_maintenance = vehicles.child('is_maintenance').val();
           var thisChild = vehiclesRef.child(vehicles.key);
           registrationExpiryDate.setDate(registrationExpiryDate.getDate() - 30);
+          var distanceTravelled = vehicles.child('distanceTravelled').val();
+          var distanceOfLastMaintenance = vehicles
+            .child('distanceOfLastMaintenance')
+            .val();
 
-          if (registrationExpiryDate >= todaysDate && reg_expiring == 0) {
+          if (registrationExpiryDate <= todaysDate && reg_expiring == 0) {
             notifs[notifsRef.push().key] = {
+              id: vehicles.key.toString(),
+              type: 'Vehicle',
               createdAt: todaysDate.toString(),
-              is_seen: 0,
+              is_active: 1,
               expiryDate: vehicles.child('registrationExpiryDate').val(),
               notifText:
                 'Vehicle Plate No: ' +
                 vehicles.child('plateNumber').val() +
                 ' registration will expire on ' +
-                todaysDate.toLocaleDateString('en-US')
+                vehicles.child('registrationExpiryDate').val()
             };
             thisChild.update({
               reg_expiring: 1
+            });
+          }
+          if (
+            distanceTravelled - distanceOfLastMaintenance >= 50000 &&
+            maint_expiring == 0
+          ) {
+            notifs[notifsRef.push().key] = {
+              id: vehicles.key.toString(),
+              type: 'Vehicle',
+              createdAt: todaysDate.toString(),
+              is_active: 1,
+              notifText:
+                'Vehicle Plate No: ' +
+                vehicles.child('plateNumber').val() +
+                ' needs Maintenance '
+            };
+            thisChild.update({
+              is_maintenance: 1
             });
           }
           notifsRef.update(notifs);
