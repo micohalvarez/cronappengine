@@ -79,7 +79,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               notifText:
                 drivers.child('firstName').val() +
                 ' ' +
-                driver.child('lastName').val() +
+                drivers.child('lastName').val() +
                 "'s driver's license will expire on " +
                 drivers.child('licenseExpiryDate').val()
             };
@@ -123,7 +123,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           }
           if (
             distanceTravelled - distanceOfLastMaintenance >= 50000 &&
-            maint_expiring == 0
+            is_maintenance == 0
           ) {
             notifs[notifsRef.push().key] = {
               id: vehicles.key.toString(),
