@@ -63,7 +63,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
                 ' ' +
                 drivers.child('lastName').val() +
                 "'s certificate will expire on " +
-                drivers.child('certificateExpiry').val()
+                drivers.child('certificateExpiry').val(),
+              expiry_type: 'certificate'
             };
             thisChild.update({
               cert_expiring: 1
@@ -81,7 +82,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
                 ' ' +
                 drivers.child('lastName').val() +
                 "'s driver's license will expire on " +
-                drivers.child('licenseExpiryDate').val()
+                drivers.child('licenseExpiryDate').val(),
+              expiry_type: 'license'
             };
             thisChild.update({
               license_expiring: 1
@@ -115,7 +117,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
                 'Vehicle Plate No: ' +
                 vehicles.child('plateNumber').val() +
                 ' registration will expire on ' +
-                vehicles.child('registrationExpiryDate').val()
+                vehicles.child('registrationExpiryDate').val(),
+              expiry_type: 'registration'
             };
             thisChild.update({
               reg_expiring: 1
@@ -133,7 +136,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
               notifText:
                 'Vehicle Plate No: ' +
                 vehicles.child('plateNumber').val() +
-                ' needs Maintenance '
+                ' needs Maintenance ',
+              expiry_type: 'maintenance'
             };
             thisChild.update({
               is_maintenance: 1
