@@ -27,15 +27,13 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   todaysDate.setHours(0, 0, 0, 0);
   var notifsRef;
   var notifs = {};
-
+  var compLocation;
   //for each companies
   var test = companiesRef.orderByValue().once('value', function(snapshot) {
     snapshot.forEach(function(companies) {
-      var compLocation = 'companies/' + companies.key;
+      compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('employees');
       var vehiclesRef = db.ref(compLocation).child('vehicles');
-
-      notifsRef = db.ref(compLocation).child('notifications');
 
       driversRef.orderByValue().once('value', function(snapshot) {
         snapshot.forEach(function(drivers) {
@@ -53,6 +51,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
           licenseExpiryDate.setDate(licenseExpiryDate.getDate() - 90);
 
           if (certificateExpiryDate <= todaysDate && cert_expiring == 0) {
+            compLocation = 'companies/' + companies.key;
+            notifsRef = db.ref(compLocation).child('notifications');
             notifs[notifsRef.push().key] = {
               id: drivers.key.toString(),
               createdAt: todaysDate.toString(),
@@ -70,8 +70,11 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             thisChild.update({
               cert_expiring: 1
             });
+            notifsRef.update(notifs);
           }
           if (licenseExpiryDate <= todaysDate && license_expiring == 0) {
+            compLocation = 'companies/' + companies.key;
+            notifsRef = db.ref(compLocation).child('notifications');
             notifs[notifsRef.push().key] = {
               id: drivers.key.toString(),
               createdAt: todaysDate.toString(),
@@ -89,8 +92,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             thisChild.update({
               license_expiring: 1
             });
+            notifsRef.update(notifs);
           }
-          notifsRef.update(notifs);
         });
       });
       vehiclesRef.orderByValue().once('value', function(snapshot) {
@@ -108,6 +111,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             .val();
 
           if (registrationExpiryDate <= todaysDate && reg_expiring == 0) {
+            compLocation = 'companies/' + companies.key;
+            notifsRef = db.ref(compLocation).child('notifications');
             notifs[notifsRef.push().key] = {
               id: vehicles.key.toString(),
               type: 'Vehicle',
@@ -124,11 +129,14 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             thisChild.update({
               reg_expiring: 1
             });
+            notifsRef.update(notifs);
           }
           if (
             distanceTravelled - distanceOfLastMaintenance >= 50000 &&
             is_maintenance == 0
           ) {
+            compLocation = 'companies/' + companies.key;
+            notifsRef = db.ref(compLocation).child('notifications');
             notifs[notifsRef.push().key] = {
               id: vehicles.key.toString(),
               type: 'Vehicle',
@@ -143,8 +151,8 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
             thisChild.update({
               is_maintenance: 1
             });
+            notifsRef.update(notifs);
           }
-          notifsRef.update(notifs);
         });
       });
     });
