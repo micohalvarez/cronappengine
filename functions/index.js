@@ -27,8 +27,9 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
   todaysDate.setHours(0, 0, 0, 0);
   var notifsRef;
   var notifs = {};
+
   //for each companies
-  companiesRef.orderByValue().once('value', function(snapshot) {
+  var test = companiesRef.orderByValue().once('value', function(snapshot) {
     snapshot.forEach(function(companies) {
       var compLocation = 'companies/' + companies.key;
       var driversRef = db.ref(compLocation).child('employees');
@@ -148,6 +149,7 @@ exports.daily_job = functions.pubsub.topic('daily-tick').onPublish(message => {
       });
     });
   });
+  var test = Promise.resolve(test).then(() => {});
   console.log('This job is run every day!!!');
   return true;
 });
